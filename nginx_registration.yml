@@ -1,0 +1,28 @@
+---
+- name: Install Nginx and Display Registration Page
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+      when: ansible_os_family == "Debian"  # Adjust based on your Linux distribution
+
+    - name: Start Nginx Service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Create HTML Registration Page
+      template:
+        src: registration_page.html.j2
+        dest: /var/www/html/registration_page.html
+      notify: Reload Nginx
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded
